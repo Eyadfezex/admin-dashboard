@@ -1,10 +1,11 @@
-import { Refine, GitHubBanner, WelcomePage } from "@refinedev/core";
+import { Refine, WelcomePage } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import { useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 
+import { dataProvider, liveProvider } from "./Providers";
 import { App as AntdApp } from "antd";
 import { BrowserRouter, Route, Routes } from "react-router";
 import routerBindings, {
@@ -15,11 +16,12 @@ import routerBindings, {
 function App() {
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
         <AntdApp>
           <DevtoolsProvider url="http://localhost:5001">
             <Refine
+              dataProvider={dataProvider}
+              liveProvider={liveProvider}
               notificationProvider={useNotificationProvider}
               routerProvider={routerBindings}
               options={{
