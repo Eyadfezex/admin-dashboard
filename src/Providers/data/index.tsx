@@ -6,9 +6,10 @@ import { fetchWrapper } from "./fetch-wrapper"; // Importing the custom fetch wr
 import { Client, createClient } from "graphql-ws"; // Importing the WebSocket client for handling real-time GraphQL subscriptions.
 
 export const API_BASE_URL = "https://api.crm.refine.dev"; // Base URL for the API.
+export const API_URL = `${API_BASE_URL}/graphql`; // graphQL URL for the API.
 export const WS_URL = "wss://api.crm.refine.dev/graphql"; // WebSocket URL for GraphQL subscriptions.
 
-export const client = new GraphQLClient(API_BASE_URL, {
+export const client = new GraphQLClient(API_URL, {
   /**
    * Custom fetch function for the GraphQL client.
    *
