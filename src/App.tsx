@@ -1,5 +1,5 @@
-import { Refine, WelcomePage } from "@refinedev/core";
-import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
+import { Refine } from "@refinedev/core";
+import { DevtoolsPanel } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import { useNotificationProvider } from "@refinedev/antd";
@@ -12,35 +12,38 @@ import routerBindings, {
   UnsavedChangesNotifier,
   DocumentTitleHandler,
 } from "@refinedev/react-router";
-
+import { authProvider } from "./Providers/auth";
+import { Home, Register, ForgotPassword, Login } from "./pages";
 function App() {
   return (
     <BrowserRouter>
       <RefineKbarProvider>
         <AntdApp>
-          <DevtoolsProvider url="http://localhost:5001">
-            <Refine
-              dataProvider={dataProvider}
-              liveProvider={liveProvider}
-              notificationProvider={useNotificationProvider}
-              routerProvider={routerBindings}
-              options={{
-                syncWithLocation: true,
-                warnWhenUnsavedChanges: true,
-                useNewQueryKeys: true,
-                projectId: "ah6hOh-drxNML-7gXkwD",
-                liveMode: "auto",
-              }}
-            >
-              <Routes>
-                <Route index element={<WelcomePage />} />
-              </Routes>
-              <RefineKbar />
-              <UnsavedChangesNotifier />
-              <DocumentTitleHandler />
-            </Refine>
-            <DevtoolsPanel />
-          </DevtoolsProvider>
+          <Refine
+            dataProvider={dataProvider}
+            liveProvider={liveProvider}
+            notificationProvider={useNotificationProvider}
+            routerProvider={routerBindings}
+            authProvider={authProvider}
+            options={{
+              syncWithLocation: true,
+              warnWhenUnsavedChanges: true,
+              useNewQueryKeys: true,
+              projectId: "ah6hOh-drxNML-7gXkwD",
+              liveMode: "auto",
+            }}
+          >
+            <Routes>
+              <Route index element={<Home />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+            </Routes>
+            <RefineKbar />
+            <UnsavedChangesNotifier />
+            <DocumentTitleHandler />
+          </Refine>
+          <DevtoolsPanel />
         </AntdApp>
       </RefineKbarProvider>
     </BrowserRouter>
