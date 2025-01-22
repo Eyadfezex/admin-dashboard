@@ -5,7 +5,8 @@ import ProjectCardSkeleton from "./skeleton/project-card";
 import UpcomingEventsSkeleton from "./skeleton/upcoming-events";
 import KanabanColumnSkeleton from "./skeleton/kanban";
 import LatestActivitiesSkeleton from "./skeleton/latest-activities";
-
+import DashboardTotalConteCard from "./home/total-count-card";
+import DashboardLatestActivities from "./home/latest-activities";
 export {
   DealsChart,
   UpcomingEvents,
@@ -14,4 +15,6 @@ export {
   KanabanColumnSkeleton,
   ProjectCardSkeleton,
   LatestActivitiesSkeleton,
+  DashboardTotalConteCard,
+  DashboardLatestActivities,
 };
