@@ -17,6 +17,7 @@ import routerBindings, {
 import { authProvider } from "./Providers/auth";
 import { Home, Register, ForgotPassword, Login } from "./pages";
 import { resources } from "./config/resources";
+import CompanyList from "./pages/company/list";
 function App() {
   return (
     <BrowserRouter>
@@ -54,6 +55,7 @@ function App() {
                 }
               >
                 <Route index element={<Home />} />
+                <Route path="/companies" element={<CompanyList />} />
               </Route>
             </Routes>
             <RefineKbar />
