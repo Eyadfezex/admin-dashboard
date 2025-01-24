@@ -19,6 +19,7 @@ import { Home, Register, ForgotPassword, Login } from "./pages";
 import { resources } from "./config/resources";
 import { CompanyList } from "./pages/company/list";
 import Create from "./pages/company/create";
+import EditPage from "./pages/company/edit";
 function App() {
   return (
     <BrowserRouter>
@@ -59,6 +60,7 @@ function App() {
                 <Route path="/companies">
                   <Route index element={<CompanyList />} />
                   <Route path="/companies/new" element={<Create />} />
+                  <Route path="/companies/edit/:id" element={<EditPage />} />
                 </Route>
               </Route>
             </Routes>
