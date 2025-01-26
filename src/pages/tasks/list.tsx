@@ -4,10 +4,8 @@ import {
   KanbanBoardContainer,
   KanbanColumn,
   KanbanItem,
-  ProjectCard,
   ProjectCardSkeleton,
 } from "@/components";
-import {} from "@/components";
 import { ProjectCardMemo } from "@/components/tasks/kanban/card";
 import { KanbanAddCardButton } from "@/components/tasks/kanban/kanban-add-card-button";
 import { UPDATE_TASK_STAGE_MUTATION } from "@/graphql/mutations";
@@ -19,9 +17,15 @@ import { useList, useNavigation, useUpdate } from "@refinedev/core";
 import { GetFieldsFromList } from "@refinedev/nestjs-query";
 import { PropsWithChildren, useMemo } from "react";
 
+// List component for rendering the Kanban board with tasks and stages
 const List = ({ children }: PropsWithChildren) => {
+  // Hook to mutate task data
   const { mutate: updateTask } = useUpdate();
+
+  // Hook for navigation
   const { replace } = useNavigation();
+
+  // Fetching task stages
   const { data: stages, isLoading: isLoadingStages } = useList<TaskStage>({
     resource: "taskStages",
     filters: [
@@ -37,7 +41,6 @@ const List = ({ children }: PropsWithChildren) => {
         order: "asc",
       },
     ],
-
     pagination: {
       mode: "off",
     },
@@ -45,6 +48,8 @@ const List = ({ children }: PropsWithChildren) => {
       gqlQuery: TASK_STAGES_QUERY,
     },
   });
+
+  // Fetching tasks
   const { data: tasks, isLoading: isLoadingTasks } = useList<
     GetFieldsFromList<TasksQuery>
   >({
@@ -65,6 +70,8 @@ const List = ({ children }: PropsWithChildren) => {
       gqlQuery: TASKS_QUERY,
     },
   });
+
+  // Processing tasks and stages into grouped columns for the board
   const taskStages = useMemo(() => {
     if (!stages?.data || !tasks?.data) {
       return {
@@ -84,6 +91,8 @@ const List = ({ children }: PropsWithChildren) => {
       columns: grouped,
     };
   }, [stages, tasks]);
+
+  // Handler for adding a new task card
   const handleAddCard = (args: { stageId: string }) => {
     const path =
       args.stageId === "unsigned"
@@ -92,6 +101,7 @@ const List = ({ children }: PropsWithChildren) => {
     replace(path);
   };
 
+  // Handler for drag and drop functionality
   const handleOnDragEnd = (event: DragEndEvent) => {
     const stageId = event.over?.id as string | null | undefined;
     const taskId = event.active?.id as string;
@@ -100,10 +110,12 @@ const List = ({ children }: PropsWithChildren) => {
       | null
       | undefined;
 
+    // Prevent update if the task remains in the same stage
     if (taskStageId === stageId) return;
 
     const newStageId = stageId === "unsigned" ? null : stageId;
 
+    // Update task stage after drag
     updateTask({
       resource: "tasks",
       id: taskId,
@@ -118,14 +130,17 @@ const List = ({ children }: PropsWithChildren) => {
     });
   };
 
+  // Loading state to display a skeleton when data is being fetched
   const isLoading = isLoadingStages || isLoadingTasks;
   if (isLoading) {
     return <PageSkeleton />;
   }
+
   return (
     <>
       <KanbanBoardContainer>
         <KanbanBoard onDragEnd={handleOnDragEnd}>
+          {/* Unsigned tasks column */}
           <KanbanColumn
             id="unsigned"
             title="unsigned"
@@ -153,6 +168,8 @@ const List = ({ children }: PropsWithChildren) => {
               />
             )}
           </KanbanColumn>
+
+          {/* Loop through each stage and render columns */}
           {taskStages.columns?.map((column, i) => (
             <KanbanColumn
               key={i}
@@ -185,9 +202,12 @@ const List = ({ children }: PropsWithChildren) => {
 };
 
 export default List;
+
+// PageSkeleton component to display a loading placeholder while tasks and stages are loading
 const PageSkeleton = () => {
-  const columnCount = 6;
-  const itemCount = 4;
+  const columnCount = 6; // Number of columns to display
+  const itemCount = 4; // Number of items per column
+
   return (
     <KanbanBoardContainer>
       {Array.from({ length: columnCount }).map((_, i) => (
