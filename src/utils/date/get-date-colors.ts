@@ -4,7 +4,7 @@ type DateColors = "success" | "processing" | "error" | "default" | "warning";
 
 //  returns a color based on the date
 export const getDateColor = (args: {
-  date: string;
+  date?: string;
   defaultColor?: DateColors;
 }): DateColors => {
   const date = dayjs(args.date);
