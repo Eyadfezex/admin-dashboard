@@ -1,73 +1,71 @@
-import { useSearchParams } from "react-router-dom";
-import { useModalForm } from "@refinedev/antd";
-import { useNavigation } from "@refinedev/core";
-import { Form, Input, Modal } from "antd";
-import { CREATE_TASK_MUTATION } from "@/graphql/mutations";
+// Import necessary modules and components
+import { useSearchParams } from "react-router-dom"; // Hook for handling query parameters in the URL
+import { useModalForm } from "@refinedev/antd"; // Hook for managing modal forms in Refine framework
+import { useNavigation } from "@refinedev/core"; // Hook for handling navigation actions in Refine
+import { Form, Input, Modal } from "antd"; // UI components from Ant Design
+import { CREATE_TASK_MUTATION } from "@/graphql/mutations"; // GraphQL mutation for creating tasks
 
+// Define the TasksCreatePage component
 const TasksCreatePage = () => {
-  // Get search parameters from the URL
+  // Extract query parameters from the URL
   const [searchParams] = useSearchParams();
 
-  /**
-   * useNavigation is a hook by Refine that allows you to navigate to a page.
-   * https://refine.dev/docs/routing/hooks/use-navigation/
-   *
-   * The list method navigates to the list page of the specified resource.
-   * https://refine.dev/docs/routing/hooks/use-navigation/#list
-   */
+  // Get navigation helper functions
   const { list } = useNavigation();
 
-  /**
-   * useModalForm is a hook by Refine for managing forms inside modals.
-   * It extends the useForm hook from the @refinedev/antd package.
-   * https://refine.dev/docs/ui-integrations/ant-design/hooks/use-modal-form/
-   *
-   * formProps -> Manages form state and actions like onFinish, onValuesChange, etc.
-   * It uses the useForm hook from @refinedev/antd internally.
-   * https://refine.dev/docs/ui-integrations/ant-design/hooks/use-modal-form/#formprops
-   *
-   * modalProps -> Manages modal state and actions like onOk, onCancel, etc.
-   * https://refine.dev/docs/ui-integrations/ant-design/hooks/use-modal-form/#modalprops
-   */
+  // Configure the modal form using Refine's useModalForm hook
   const { formProps, modalProps, close } = useModalForm({
-    action: "create", // Specify the action type as 'create'
-    defaultVisible: true, // Make the modal visible by default
+    action: "create", // Specifies that this is a create action
+    defaultVisible: true, // Modal should be visible by default
     meta: {
-      gqlMutation: CREATE_TASK_MUTATION, // Set the GraphQL mutation for creating a task
+      gqlMutation: CREATE_TASK_MUTATION, // Specifies the GraphQL mutation to use
     },
   });
 
+  console.log("formProps:", formProps); // Log the form properties for debugging
+
   return (
+    // Define the Modal component for adding a new task
     <Modal
-      {...modalProps} // Spread modalProps to handle modal visibility and actions
+      {...modalProps} // Spread modalProps for modal configuration
+      title="Add new card" // Modal title
       onCancel={() => {
         close(); // Close the modal
-        list("tasks", "replace"); // Navigate to the list page of tasks
+        list("tasks", "replace"); // Navigate to the tasks list, replacing the current route
       }}
-      title="Add new card" // Modal title
-      width={512}
+      width={512} // Modal width
     >
+      {/* Define the form inside the modal */}
       <Form
-        {...formProps} // Spread formProps to manage form state and validation
-        layout="vertical" // Use vertical layout for the form fields
+        form={formProps.form} // Bind the form instance from formProps
+        {...formProps} // Spread formProps for additional configurations
+        layout="vertical" // Use a vertical form layout
+        initialValues={{
+          title: "", // Initial value for the title field
+        }}
         onFinish={(values) => {
-          // On form submit, add additional values like stageId and userIds
+          // Handle form submission
+          console.log("Form submitted values:", values); // Log submitted values for debugging
           formProps?.onFinish?.({
-            ...values,
+            ...values, // Include all form values
             stageId: searchParams.get("stageId")
-              ? Number(searchParams.get("stageId"))
-              : null, // Set the stageId based on the search params from URL
-            userIds: [], // Default value for userIds
+              ? Number(searchParams.get("stageId")) // Get stageId from query parameters, if available
+              : null, // Otherwise, set stageId to null
+            userIds: [], // Set an empty array for userIds
           });
         }}
       >
-        {/* Title form input */}
-        <Form.Item label="Title" name="title" rules={[{ required: true }]}>
-          <Input /> {/* Input field for task title */}
+        {/* Form item for the task title */}
+        <Form.Item
+          label="Title" // Label for the input field
+          name="title" // Name of the form field
+          rules={[{ required: true, message: "Title is required" }]} // Validation rule: title is required
+        >
+          <Input /> {/* Input field for the title */}
         </Form.Item>
       </Form>
     </Modal>
   );
 };
 
-export default TasksCreatePage;
+export default TasksCreatePage; // Export the component as the default export

@@ -5,30 +5,30 @@ import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import { useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 
-import { dataProvider, liveProvider } from "./Providers";
-import { App as AntdApp } from "antd";
-import Layout from "./components/layout/index";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router";
+import { authProvider, dataProvider, liveProvider } from "./Providers";
+import { Home, ForgotPassword, Login, Register, CompanyList } from "./pages";
+
 import routerBindings, {
-  UnsavedChangesNotifier,
-  DocumentTitleHandler,
   CatchAllNavigate,
-} from "@refinedev/react-router";
-import { authProvider } from "./Providers/auth";
-import { Home, Register, ForgotPassword, Login } from "./pages";
+  DocumentTitleHandler,
+  UnsavedChangesNotifier,
+} from "@refinedev/react-router-v6";
+import { App as AntdApp } from "antd";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import Layout from "./components/layout";
 import { resources } from "./config/resources";
-import { CompanyList } from "./pages/company/list";
 import Create from "./pages/company/create";
-import EditPage from "./pages/company/edit";
+import Edit from "./pages/company/edit";
 import List from "./pages/tasks/list";
-import TaskCreatePage from "./pages/tasks/create";
-import TaskEditPage from "./pages/tasks/edit";
+import EditTask from "./pages/tasks/edit";
+import CreateTask from "./pages/tasks/create";
+
 function App() {
   return (
     <BrowserRouter>
       <RefineKbarProvider>
         <AntdApp>
-          <DevtoolsProvider url={"http://localhost:5001"}>
+          <DevtoolsProvider>
             <Refine
               dataProvider={dataProvider}
               liveProvider={liveProvider}
@@ -40,7 +40,7 @@ function App() {
                 syncWithLocation: true,
                 warnWhenUnsavedChanges: true,
                 useNewQueryKeys: true,
-                projectId: "ah6hOh-drxNML-7gXkwD",
+                projectId: "WVyLEd-4karEq-tItoeC",
                 liveMode: "auto",
               }}
             >
@@ -63,8 +63,8 @@ function App() {
                   <Route index element={<Home />} />
                   <Route path="/companies">
                     <Route index element={<CompanyList />} />
-                    <Route path="/companies/new" element={<Create />} />
-                    <Route path="/companies/edit/:id" element={<EditPage />} />
+                    <Route path="new" element={<Create />} />
+                    <Route path="edit/:id" element={<Edit />} />
                   </Route>
                   <Route
                     path="/tasks"
@@ -74,8 +74,8 @@ function App() {
                       </List>
                     }
                   >
-                    <Route path="new" element={<TaskCreatePage />} />
-                    <Route path="edit/:id" element={<TaskEditPage />} />
+                    <Route path="new" element={<CreateTask />} />
+                    <Route path="edit/:id" element={<EditTask />} />
                   </Route>
                 </Route>
               </Routes>
@@ -83,8 +83,8 @@ function App() {
               <UnsavedChangesNotifier />
               <DocumentTitleHandler />
             </Refine>
+            <DevtoolsPanel />
           </DevtoolsProvider>
-          <DevtoolsPanel />
         </AntdApp>
       </RefineKbarProvider>
     </BrowserRouter>
