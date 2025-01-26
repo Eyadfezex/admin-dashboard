@@ -1,14 +1,14 @@
-import { AuthProvider } from "@refinedev/core";
+import { AuthBindings } from "@refinedev/core";
 
 import { API_URL, dataProvider } from "./data";
 
 // For demo purposes and to make it easier to test the app, you can use the following credentials
 export const authCredentials = {
-  email: "michael.scott@dundermifflin.com",
+  email: "oscar.martinez@dundermifflin.com",
   password: "demodemo",
 };
 
-export const authProvider: AuthProvider = {
+export const authProvider: AuthBindings = {
   login: async ({ email }) => {
     try {
       // call the login mutation
@@ -17,19 +17,17 @@ export const authProvider: AuthProvider = {
       const { data } = await dataProvider.custom({
         url: API_URL,
         method: "post",
-        headers: {
-          "Content-Type": "application/json", // Ensure the content type is specified
-          Accept: "application/json", // Accept JSON response
-        },
+        headers: {},
         meta: {
-          variables: { email }, // Dynamically passing the email variable
+          variables: { email },
+          // pass the email to see if the user exists and if so, return the accessToken
           rawQuery: `
-      mutation Login($email: String!) {
-        login(loginInput: { email: $email }) {
-          accessToken
-        }
-      }
-    `,
+            mutation Login($email: String!) {
+              login(loginInput: { email: $email }) {
+                accessToken
+              }
+            }
+          `,
         },
       });
 

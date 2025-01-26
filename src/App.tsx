@@ -1,5 +1,5 @@
 import { Authenticated, Refine } from "@refinedev/core";
-import { DevtoolsPanel } from "@refinedev/devtools";
+import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import { useNotificationProvider } from "@refinedev/antd";
@@ -20,54 +20,70 @@ import { resources } from "./config/resources";
 import { CompanyList } from "./pages/company/list";
 import Create from "./pages/company/create";
 import EditPage from "./pages/company/edit";
+import List from "./pages/tasks/list";
+import TaskCreatePage from "./pages/tasks/create";
+import TaskEditPage from "./pages/tasks/edit";
 function App() {
   return (
     <BrowserRouter>
       <RefineKbarProvider>
         <AntdApp>
-          <Refine
-            dataProvider={dataProvider}
-            liveProvider={liveProvider}
-            notificationProvider={useNotificationProvider}
-            routerProvider={routerBindings}
-            authProvider={authProvider}
-            resources={resources}
-            options={{
-              syncWithLocation: true,
-              warnWhenUnsavedChanges: true,
-              useNewQueryKeys: true,
-              projectId: "ah6hOh-drxNML-7gXkwD",
-              liveMode: "auto",
-            }}
-          >
-            <Routes>
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route
-                element={
-                  <Authenticated
-                    key="authenticated-layout"
-                    fallback={<CatchAllNavigate to="/login" />}
+          <DevtoolsProvider url={"http://localhost:5001"}>
+            <Refine
+              dataProvider={dataProvider}
+              liveProvider={liveProvider}
+              notificationProvider={useNotificationProvider}
+              routerProvider={routerBindings}
+              authProvider={authProvider}
+              resources={resources}
+              options={{
+                syncWithLocation: true,
+                warnWhenUnsavedChanges: true,
+                useNewQueryKeys: true,
+                projectId: "ah6hOh-drxNML-7gXkwD",
+                liveMode: "auto",
+              }}
+            >
+              <Routes>
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route
+                  element={
+                    <Authenticated
+                      key="authenticated-layout"
+                      fallback={<CatchAllNavigate to="/login" />}
+                    >
+                      <Layout>
+                        <Outlet />
+                      </Layout>
+                    </Authenticated>
+                  }
+                >
+                  <Route index element={<Home />} />
+                  <Route path="/companies">
+                    <Route index element={<CompanyList />} />
+                    <Route path="/companies/new" element={<Create />} />
+                    <Route path="/companies/edit/:id" element={<EditPage />} />
+                  </Route>
+                  <Route
+                    path="/tasks"
+                    element={
+                      <List>
+                        <Outlet />
+                      </List>
+                    }
                   >
-                    <Layout>
-                      <Outlet />
-                    </Layout>
-                  </Authenticated>
-                }
-              >
-                <Route index element={<Home />} />
-                <Route path="/companies">
-                  <Route index element={<CompanyList />} />
-                  <Route path="/companies/new" element={<Create />} />
-                  <Route path="/companies/edit/:id" element={<EditPage />} />
+                    <Route path="new" element={<TaskCreatePage />} />
+                    <Route path="edit/:id" element={<TaskEditPage />} />
+                  </Route>
                 </Route>
-              </Route>
-            </Routes>
-            <RefineKbar />
-            <UnsavedChangesNotifier />
-            <DocumentTitleHandler />
-          </Refine>
+              </Routes>
+              <RefineKbar />
+              <UnsavedChangesNotifier />
+              <DocumentTitleHandler />
+            </Refine>
+          </DevtoolsProvider>
           <DevtoolsPanel />
         </AntdApp>
       </RefineKbarProvider>
